@@ -1,0 +1,47 @@
+extern crate hyper;
+extern crate reroute;
+extern crate rss;
+
+use hyper::server::{Server, Request, Response, Handler};
+use reroute::{Router, Captures};
+
+mod broadcast;
+mod bassdrive;
+
+#[allow(unused)]
+fn http_404(req: Request, res: Response) {
+    res.send(format!("Couldn't find URL: {}", req.uri).as_bytes());
+}
+
+struct EchoHandler {
+    response: String
+}
+
+impl EchoHandler {
+    fn handle(&self, _: Request, res: Response, _: Captures) {
+        res.send(self.response.as_bytes());
+    }
+}
+
+
+#[allow(unused)]
+fn main() {
+    let mut router = Router::new();
+
+    let echo = EchoHandler {
+        response: "Hello, world!".to_string()
+    };
+    router.get(r"/hello", echo);
+
+    /*
+    router.get(r"/hello", build_broadcast(
+            BassDrive {
+                url: "http://archives.bassdrivearchive.com/6%20-%20Saturday/Electronic%20Warfare%20-%20The%20Overfiend/"
+            })
+        );
+    */
+    router.add_not_found(http_404);
+    router.finalize().unwrap();
+
+    Server::http("0.0.0.0:3000").unwrap().handle(router).unwrap();
+}

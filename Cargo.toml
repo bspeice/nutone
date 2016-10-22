@@ -1,0 +1,11 @@
+[package]
+name = "nutone"
+version = "0.1.0"
+authors = ["Bradlee Speice <bradlee.speice@gmail.com>"]
+
+[dependencies]
+html5ever = "*"
+rss = "*"
+hyper = "*"
+iron = "*"
+router = "*"
